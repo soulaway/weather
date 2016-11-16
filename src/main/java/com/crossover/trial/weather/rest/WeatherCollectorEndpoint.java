@@ -1,8 +1,11 @@
-package com.crossover.trial.weather;
+package com.crossover.trial.weather.rest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.crossover.trial.weather.dto.AirportData;
+import com.crossover.trial.weather.dto.DataPointType;
 
 /**
  * The interface shared to airport weather collection systems.

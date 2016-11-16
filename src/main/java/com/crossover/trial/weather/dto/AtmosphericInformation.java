@@ -1,9 +1,9 @@
-package com.crossover.trial.weather;
+package com.crossover.trial.weather.dto;
 
 /**
  * encapsulates sensor information for a particular location
  */
-class AtmosphericInformation {
+public class AtmosphericInformation {
 
     /** temperature in degrees celsius */
     private DataPoint temperature;
@@ -76,10 +76,10 @@ class AtmosphericInformation {
     public void setCloudCover(DataPoint cloudCover) {
         this.cloudCover = cloudCover;
     }
-    protected long getLastUpdateTime() {
+    public long getLastUpdateTime() {
         return this.lastUpdateTime;
     }
-    protected void setLastUpdateTime(long lastUpdateTime) {
+    public void setLastUpdateTime(long lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
     }
 }

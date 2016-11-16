@@ -1,4 +1,4 @@
-package com.crossover.trial.weather;
+package com.crossover.trial.weather.dto;
 
 /**
  * The various types of data points we can collect.

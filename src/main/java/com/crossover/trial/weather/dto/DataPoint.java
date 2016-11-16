@@ -1,4 +1,4 @@
-package com.crossover.trial.weather;
+package com.crossover.trial.weather.dto;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -36,7 +36,9 @@ public class DataPoint {
         return mean;
     }
 
-    protected void setMean(double mean) { this.mean = mean; }
+    public void setMean(double mean) {
+    	this.mean = mean;
+    }
 
     /** 1st quartile -- useful as a lower bound */
     public int getFirst() {
