@@ -21,7 +21,6 @@ import org.glassfish.grizzly.servlet.FilterRegistration;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 import com.google.inject.servlet.GuiceFilter;
@@ -44,10 +43,6 @@ public class WeatherServer {
         try {
             System.out.println("Starting Weather App local testing server: " + BASE_URI.toString());
 
-            final ResourceConfig resourceConfig = new ResourceConfig();
-            resourceConfig.register(RestWeatherCollectorEndpoint.class);
-            resourceConfig.register(RestWeatherQueryEndpoint.class);
-
             final WebappContext context = new WebappContext("GuiceWebappContext", "");
             context.addListener(GuiceConfigContextListener.class);
             
@@ -64,9 +59,7 @@ public class WeatherServer {
 				e.printStackTrace();
 			}	
             
-            //HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URL), resourceConfig, false);
-            
-            HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI);
+            final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, false);
             context.deploy(server);            
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 server.shutdownNow();
@@ -79,10 +72,10 @@ public class WeatherServer {
             };
             
             server.getServerConfiguration().getMonitoringConfig().getWebServerConfig().addProbes(probe);
+
+            server.start();
             
             // the autograder waits for this output before running automated tests, please don't remove it
-            //context.deploy(server);
-            server.start();
             System.out.println(format("Weather Server started.\n url=%s\n", BASE_URI.toString()));
 
             // blocks until the process is terminated
