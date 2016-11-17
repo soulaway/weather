@@ -6,7 +6,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
-import com.crossover.trial.weather.dto.DataPoint;
+import com.crossover.trial.weather.dto.WeatherPoint;
 
 /**
  * A reference implementation for the weather client. Consumers of the REST API can look at WeatherClient
@@ -51,7 +51,7 @@ public class WeatherClient {
 
     public void populate(String pointType, int first, int last, int mean, int median, int count) {
         WebTarget path = collect.path("/weather/BOS/" + pointType);
-        DataPoint dp = new DataPoint(first, last, mean, median, count);
+        WeatherPoint dp = new WeatherPoint(pointType).withCount(count).withFirst(first).withSecond(median).withThird(last).withMean(mean);
         path.request().post(Entity.entity(dp, "application/json"));
     }
 

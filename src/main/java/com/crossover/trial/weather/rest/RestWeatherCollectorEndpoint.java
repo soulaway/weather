@@ -10,12 +10,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.WeatherCollectorEndpoint;
-import com.crossover.trial.weather.dto.AirportDto;
-import com.crossover.trial.weather.dto.DataPoint;
+import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.exception.BusinessException;
-import com.crossover.trial.weather.service.WeatherCollectorService;
-import com.crossover.trial.weather.service.WeatherQueryService;
+import com.crossover.trial.weather.service.QueryService;
 import com.google.gson.Gson;
+import com.google.inject.Singleton;
 
 /**
  * A REST implementation of the WeatherCollector API. Accessible only to airport weather collection
@@ -25,14 +24,13 @@ import com.google.gson.Gson;
  */
 
 @Path("/collect")
+@Singleton
 public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
-    public final static Logger LOGGER = Logger.getLogger(RestWeatherCollectorEndpoint.class.getName());
+	
+	public final static Logger LOGGER = Logger.getLogger(RestWeatherCollectorEndpoint.class.getName());
     
     @Inject
-    public WeatherQueryService queryService;
-    
-    @Inject
-    public WeatherCollectorService collectorService;   
+    public QueryService queryService;
     
     @Override
     public Response ping() {
@@ -46,7 +44,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
                                   String datapointJson) {
         try {
         	Gson gson = new Gson();
-        	collectorService.addDataPoint(iataCode, pointType, gson.fromJson(datapointJson, DataPoint.class));
+        	//collectorService.addDataPoint(iataCode, pointType, gson.fromJson(datapointJson, WeatherPoint.class));
         } catch (BusinessException e) {
             e.printStackTrace();
         }
@@ -57,16 +55,16 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
     @Override
     public Response getAirports() {
         Set<String> retval = new HashSet<>();
-        for (AirportDto ad : queryService.getAirportData()) {
+/*        for (Airport ad : queryService.getAirportData()) {
             retval.add(ad.getIata());
-        }
+        }*/
         return Response.status(Response.Status.OK).entity(retval).build();
     }
 
 
     @Override
     public Response getAirport(@PathParam("iata") String iata) {
-        AirportDto ad = queryService.findAirportData(iata);
+        Airport ad = null;//queryService.findAirportData(iata);
         return Response.status(Response.Status.OK).entity(ad).build();
     }
 
@@ -75,7 +73,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
     public Response addAirport(@PathParam("iata") String iata,
                                @PathParam("lat") String latString,
                                @PathParam("long") String longString) {
-    	collectorService.addAirport(iata, Double.valueOf(latString), Double.valueOf(longString));
+    	queryService.addAirport(iata, Double.valueOf(latString), Double.valueOf(longString));
         return Response.status(Response.Status.OK).build();
     }
 

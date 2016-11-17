@@ -32,7 +32,7 @@ public interface WeatherQueryEndpoint {
      * @param iata the three letter airport code
      * @param radiusString the radius, in km, from which to collect weather data
      *
-     * @return an HTTP Response and a list of {@link AtmosphericInformation} from the requested airport and
+     * @return an HTTP Response and a list of {@link WeatherDto} from the requested airport and
      * airports in the given radius
      */
     @GET

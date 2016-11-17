@@ -1,9 +1,9 @@
 package com.crossover.trial.weather;
 
-import com.crossover.trial.weather.service.WeatherCollectorService;
-import com.crossover.trial.weather.service.WeatherQueryService;
-import com.crossover.trial.weather.service.impl.WeatherCollectorServiceImpl;
-import com.crossover.trial.weather.service.impl.WeatherQueryServiceImpl;
+import com.crossover.trial.weather.rest.RestWeatherCollectorEndpoint;
+import com.crossover.trial.weather.rest.RestWeatherQueryEndpoint;
+import com.crossover.trial.weather.service.QueryService;
+import com.crossover.trial.weather.service.QueryServiceImpl;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -27,18 +27,24 @@ public class GuiceConfigContextListener extends GuiceServletContextListener {
 		injector = Guice.createInjector(new ServletModule() {
 			@Override
 			protected void configureServlets() {
-				bind(WeatherQueryServiceImpl.class);
-				bind(WeatherCollectorServiceImpl.class);
+				bind(QueryServiceImpl.class);
+				bind(RestWeatherCollectorEndpoint.class);
+				bind(RestWeatherQueryEndpoint.class);
 			}
 
 			@Provides
-			WeatherQueryService createAndIngectQueryService() {
-				return new WeatherQueryServiceImpl();
+			QueryService produceQueryService() {
+				return new QueryServiceImpl();
 			}
 
 			@Provides
-			WeatherCollectorService createAndIngectCollectorService() {
-				return new WeatherCollectorServiceImpl();
+			WeatherCollectorEndpoint produceWeatherCollectorEndpoint() {
+				return new RestWeatherCollectorEndpoint();
+			}
+			
+			@Provides
+			WeatherQueryEndpoint produceWeatherQueryEndpoint() {
+				return new RestWeatherQueryEndpoint();
 			}
 
 		});

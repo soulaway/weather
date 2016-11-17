@@ -8,9 +8,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.WeatherQueryEndpoint;
-import com.crossover.trial.weather.dto.AtmosphericInformation;
-import com.crossover.trial.weather.service.WeatherQueryService;
+import com.crossover.trial.weather.dto.WeatherPoint;
+import com.crossover.trial.weather.service.QueryService;
 import com.google.gson.Gson;
+import com.google.inject.servlet.RequestScoped;
 
 /**
  * The Weather App REST endpoint allows clients to query, update and check health stats. Currently, all data is
@@ -19,12 +20,13 @@ import com.google.gson.Gson;
  * @author code test administrator
  */
 @Path("/query")
+@RequestScoped
 public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
 
-    public final static Logger LOGGER = Logger.getLogger("WeatherQuery");
+    public final static Logger LOGGER = Logger.getLogger(RestWeatherQueryEndpoint.class.getName());
     
     @Inject
-    public WeatherQueryService queryService;
+    public QueryService queryService;
     
     /**
      * Retrieve service health including total size of valid data points and request frequency information.
@@ -36,7 +38,7 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
     	Gson gson = new Gson();
     	String result = gson.toJson(queryService.getHelthStatus());
     	System.out.println("ping:: "+ result);
-    	return Response.status(Response.Status.OK).entity(result).build().toString();
+    	return Response.status(Response.Status.OK).build().toString();
     }
 
     /**
@@ -50,7 +52,7 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
      */
     @Override
     public Response weather(String iata, String radiusString) {
-        List<AtmosphericInformation> retval = queryService.getWeather(iata, radiusString);
+        List<WeatherPoint> retval = queryService.getWeather(iata, radiusString);
         return Response.status(Response.Status.OK).entity(retval).build();
     }
 }
