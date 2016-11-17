@@ -51,10 +51,8 @@ public class WeatherClient {
 
     public void populate(String pointType, int first, int last, int mean, int median, int count) {
         WebTarget path = collect.path("/weather/BOS/" + pointType);
-        DataPoint dp = new DataPoint.Builder()
-                .withFirst(first).withLast(last).withMean(mean).withMedian(median).withCount(count)
-                .build();
-        Response post = path.request().post(Entity.entity(dp, "application/json"));
+        DataPoint dp = new DataPoint(first, last, mean, median, count);
+        path.request().post(Entity.entity(dp, "application/json"));
     }
 
     public void exit() {

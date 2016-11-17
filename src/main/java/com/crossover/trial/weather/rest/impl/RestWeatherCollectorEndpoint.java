@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.dto.AirportData;
 import com.crossover.trial.weather.dto.DataPoint;
-import com.crossover.trial.weather.exception.BaseException;
+import com.crossover.trial.weather.exception.BusinessException;
 import com.crossover.trial.weather.rest.WeatherCollectorEndpoint;
 import com.crossover.trial.weather.service.WeatherCollectorService;
 import com.crossover.trial.weather.service.WeatherQueryService;
@@ -47,7 +47,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
         try {
         	Gson gson = new Gson();
         	collectorService.addDataPoint(iataCode, pointType, gson.fromJson(datapointJson, DataPoint.class));
-        } catch (BaseException e) {
+        } catch (BusinessException e) {
             e.printStackTrace();
         }
         return Response.status(Response.Status.OK).build();

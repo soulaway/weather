@@ -59,7 +59,7 @@ public class WeatherServer {
 		}
 	}
 
-	static WebappContext createGuiceWebappContext(Class<? extends Application> rsApplicationClass)
+	public static WebappContext createGuiceWebappContext(Class<? extends Application> rsApplicationClass)
 			throws ServletException {
 
 		final WebappContext context = new WebappContext("GuiceWebappContext", "");
@@ -76,8 +76,8 @@ public class WeatherServer {
 		return context;
 	}
 
-	static HttpServer createGreezly(URI baseUri) {
-		final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, false);
+	public static HttpServer createGreezly(URI baseUri) {
+		final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, false);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			server.shutdownNow();

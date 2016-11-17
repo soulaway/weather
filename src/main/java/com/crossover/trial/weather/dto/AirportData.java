@@ -1,5 +1,8 @@
 package com.crossover.trial.weather.dto;
 
+import java.io.Serializable;
+import java.util.Objects;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -8,52 +11,63 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author code test administrator
  */
-public class AirportData {
+public class AirportData implements Serializable {
 
-    /** the three letter IATA code */
-    String iata;
+	private static final long serialVersionUID = AirportData.class.getName().hashCode();
 
-    /** latitude value in degrees */
-    double latitude;
+	/** the three letter IATA code */
+	private String iata;
 
-    /** longitude value in degrees */
-    double longitude;
+	/** latitude value in degrees */
+	private double latitude;
 
-    public AirportData() { }
+	/** longitude value in degrees */
+	private double longitude;
 
-    public String getIata() {
-        return iata;
-    }
+	public String getIata() {
+		return iata;
+	}
 
-    public void setIata(String iata) {
-        this.iata = iata;
-    }
+	public void setIata(String iata) {
+		this.iata = iata;
+	}
 
-    public double getLatitude() {
-        return latitude;
-    }
+	public double getLatitude() {
+		return latitude;
+	}
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
 
-    public double getLongitude() {
-        return longitude;
-    }
+	public double getLongitude() {
+		return longitude;
+	}
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
+	}
 
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
-    }
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.JSON_STYLE);
+	}
 
-    public boolean equals(Object other) {
-        if (other instanceof AirportData) {
-            return ((AirportData)other).getIata().equals(this.getIata());
-        }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		AirportData a = (AirportData) o;
 
-        return false;
-    }
+		return true && Objects.equals(iata, a.getIata()) && latitude == a.getLatitude()
+				&& longitude == a.getLongitude();
+	}
+
+	@Override
+	public int hashCode() {
+		return iata.hashCode() + Double.hashCode(longitude) + Double.hashCode(latitude);
+	}
 }

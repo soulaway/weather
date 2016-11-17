@@ -1,4 +1,4 @@
-package com.crossover.trial.weather.test;
+package com.crossover.trial.weather.test.service;
 
 import com.crossover.trial.weather.dto.AtmosphericInformation;
 import com.crossover.trial.weather.dto.DataPoint;
@@ -16,7 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class WeatherEndpointTest {
+public class CollectorServiceTest {
 
     private WeatherQueryEndpoint _query = new RestWeatherQueryEndpoint();
 
@@ -29,8 +29,7 @@ public class WeatherEndpointTest {
     @Before
     public void setUp() throws Exception {
         //RestWeatherQueryEndpoint.init();
-        _dp = new DataPoint.Builder()
-                .withCount(10).withFirst(10).withMedian(20).withLast(30).withMean(22).build();
+        _dp = new DataPoint(22, 10, 20, 30, 10);
         _update.updateWeather("BOS", "wind", _gson.toJson(_dp));
         _query.weather("BOS", "0").getEntity();
     }
@@ -65,8 +64,7 @@ public class WeatherEndpointTest {
     @Test
     public void testUpdate() throws Exception {
 
-        DataPoint windDp = new DataPoint.Builder()
-                .withCount(10).withFirst(10).withMedian(20).withLast(30).withMean(22).build();
+        DataPoint windDp = new DataPoint(22, 10, 20, 30, 10);
         _update.updateWeather("BOS", "wind", _gson.toJson(windDp));
         _query.weather("BOS", "0").getEntity();
 
@@ -74,8 +72,7 @@ public class WeatherEndpointTest {
         JsonElement pingResult = new JsonParser().parse(ping);
         assertEquals(1, pingResult.getAsJsonObject().get("datasize").getAsInt());
 
-        DataPoint cloudCoverDp = new DataPoint.Builder()
-                .withCount(4).withFirst(10).withMedian(60).withLast(100).withMean(50).build();
+        DataPoint cloudCoverDp = new DataPoint(50, 10, 60, 100, 4);
         _update.updateWeather("BOS", "cloudcover", _gson.toJson(cloudCoverDp));
 
         List<AtmosphericInformation> ais = (List<AtmosphericInformation>) _query.weather("BOS", "0").getEntity();

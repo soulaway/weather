@@ -5,8 +5,8 @@ import java.io.Serializable;
 import com.crossover.trial.weather.dto.AirportData;
 import com.crossover.trial.weather.dto.AtmosphericInformation;
 import com.crossover.trial.weather.dto.DataPoint;
-import com.crossover.trial.weather.dto.DataPointType;
-import com.crossover.trial.weather.exception.BaseException;
+import com.crossover.trial.weather.enums.DataPointType;
+import com.crossover.trial.weather.exception.BusinessException;
 import com.crossover.trial.weather.service.WeatherCollectorService;
 import com.crossover.trial.weather.service.WeatherQueryService;
 import com.google.inject.Inject;
@@ -26,10 +26,10 @@ public class WeatherCollectorServiceImpl implements WeatherCollectorService, Ser
      * @param pointType the point type {@link DataPointType}
      * @param dp a datapoint object holding pointType data
      *
-     * @throws BaseException if the update can not be completed
+     * @throws BusinessException if the update can not be completed
      */
     @Override
-    public void addDataPoint(String iataCode, String pointType, DataPoint dp) throws BaseException {
+    public void addDataPoint(String iataCode, String pointType, DataPoint dp) throws BusinessException {
         int airportDataIdx = queryService.getAirportDataIdx(iataCode);
         AtmosphericInformation ai = queryService.getAtmosphericInformation().get(airportDataIdx);
         updateAtmosphericInformation(ai, pointType, dp);
@@ -43,7 +43,7 @@ public class WeatherCollectorServiceImpl implements WeatherCollectorService, Ser
      * @param dp the actual data point
      */
     @Override
-    public void updateAtmosphericInformation(AtmosphericInformation ai, String pointType, DataPoint dp) throws BaseException {
+    public void updateAtmosphericInformation(AtmosphericInformation ai, String pointType, DataPoint dp) throws BusinessException {
         final DataPointType dptype = DataPointType.valueOf(pointType.toUpperCase());
 
         if (pointType.equalsIgnoreCase(DataPointType.WIND.name())) {

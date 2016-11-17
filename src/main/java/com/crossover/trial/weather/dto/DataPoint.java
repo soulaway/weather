@@ -1,125 +1,88 @@
 package com.crossover.trial.weather.dto;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /**
- * A collected point, including some information about the range of collected values
+ * A collected point, including some information about the range of collected
+ * values
  *
  * @author code test administrator
  */
 public class DataPoint {
 
-    public double mean = 0.0;
+	private double mean;
 
-    public int first = 0;
+	private int first;
 
-    public int second = 0;
+	private int second;
 
-    public int third = 0;
+	private int third;
 
-    public int count = 0;
+	private int count;
+	
+	public DataPoint(double mean, int first, int second, int third, int count){
+		this.mean = mean;
+		this.first = first;
+		this.second = second;
+		this.third = third;
+		this.count = count;
+	}
+	
+	public double getMean() {
+		return mean;
+	}
 
-    /** private constructor, use the builder to create this object */
-    private DataPoint() { }
+	public void setMean(double mean) {
+		this.mean = mean;
+	}
 
-    protected DataPoint(int first, int second, int mean, int third, int count) {
-        this.setFirst(first);
-        this.setMean(mean);
-        this.setSecond(second);
-        this.setThird(third);
-        this.setCount(count);
-    }
+	public int getFirst() {
+		return first;
+	}
 
-    /** the mean of the observations */
-    public double getMean() {
-        return mean;
-    }
+	public void setFirst(int first) {
+		this.first = first;
+	}
 
-    public void setMean(double mean) {
-    	this.mean = mean;
-    }
+	public int getSecond() {
+		return second;
+	}
 
-    /** 1st quartile -- useful as a lower bound */
-    public int getFirst() {
-        return first;
-    }
+	public void setSecond(int second) {
+		this.second = second;
+	}
 
-    protected void setFirst(int first) {
-        this.first = first;
-    }
+	public int getThird() {
+		return third;
+	}
 
-    /** 2nd quartile -- median value */
-    public int getSecond() {
-        return second;
-    }
+	public void setThird(int third) {
+		this.third = third;
+	}
 
-    protected void setSecond(int second) {
-        this.second = second;
-    }
+	public int getCount() {
+		return count;
+	}
 
-    /** 3rd quartile value -- less noisy upper value */
-    public int getThird() {
-        return third;
-    }
+	public void setCount(int count) {
+		this.count = count;
+	}
 
-    protected void setThird(int third) {
-        this.third = third;
-    }
+	@Override
+	public boolean equals(java.lang.Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		DataPoint dp = (DataPoint) o;
 
-    /** the total number of measurements */
-    public int getCount() {
-        return count;
-    }
+		return true && mean == dp.getMean() && first == dp.getFirst() && second == dp.getSecond()
+				&& third == dp.getThird() && count == dp.getCount();
+	}
 
-    protected void setCount(int count) {
-        this.count = count;
-    }
+	@Override
+	public int hashCode() {
+		return Double.hashCode(mean) + first + second + third + count;
+	}
 
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.NO_CLASS_NAME_STYLE);
-    }
-
-    public boolean equals(Object that) {
-        return this.toString().equals(that.toString());
-    }
-
-    static public class Builder {
-        int first;
-        int mean;
-        int median;
-        int last;
-        int count;
-
-        public Builder() { }
-
-        public Builder withFirst(int first) {
-            first= first;
-            return this;
-        }
-
-        public Builder withMean(int mean) {
-            mean = mean;
-            return this;
-        }
-
-        public Builder withMedian(int median) {
-            median = median;
-            return this;
-        }
-
-        public Builder withCount(int count) {
-            count = count;
-            return this;
-        }
-
-        public Builder withLast(int last) {
-            last = last;
-            return this;
-        }
-
-        public DataPoint build() {
-            return new DataPoint(this.first, this.mean, this.median, this.last, this.count);
-        }
-    }
 }
