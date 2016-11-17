@@ -1,4 +1,4 @@
-package com.crossover.trial.weather.rest.impl;
+package com.crossover.trial.weather.rest;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,10 +9,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
-import com.crossover.trial.weather.dto.AirportData;
+import com.crossover.trial.weather.WeatherCollectorEndpoint;
+import com.crossover.trial.weather.dto.AirportDto;
 import com.crossover.trial.weather.dto.DataPoint;
 import com.crossover.trial.weather.exception.BusinessException;
-import com.crossover.trial.weather.rest.WeatherCollectorEndpoint;
 import com.crossover.trial.weather.service.WeatherCollectorService;
 import com.crossover.trial.weather.service.WeatherQueryService;
 import com.google.gson.Gson;
@@ -57,7 +57,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
     @Override
     public Response getAirports() {
         Set<String> retval = new HashSet<>();
-        for (AirportData ad : queryService.getAirportData()) {
+        for (AirportDto ad : queryService.getAirportData()) {
             retval.add(ad.getIata());
         }
         return Response.status(Response.Status.OK).entity(retval).build();
@@ -66,7 +66,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
 
     @Override
     public Response getAirport(@PathParam("iata") String iata) {
-        AirportData ad = queryService.findAirportData(iata);
+        AirportDto ad = queryService.findAirportData(iata);
         return Response.status(Response.Status.OK).entity(ad).build();
     }
 

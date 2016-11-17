@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.crossover.trial.weather.dto.AirportData;
+import com.crossover.trial.weather.dto.AirportDto;
 import com.crossover.trial.weather.dto.AtmosphericInformation;
 import com.crossover.trial.weather.service.WeatherQueryService;
 import com.crossover.trial.weather.service.impl.WeatherQueryServiceImpl;
@@ -16,12 +16,12 @@ public class QueryServiceTest {
 	
 	@Test
 	public void findAirportDataTest(){
-		AirportData result = service.findAirportData("");
+		AirportDto result = service.findAirportData("");
 	}
 	
 	@Test
 	public void getAirportDataTest(){
-		List<AirportData> result = service.getAirportData();
+		List<AirportDto> result = service.getAirportData();
 	}
 	
 	@Test

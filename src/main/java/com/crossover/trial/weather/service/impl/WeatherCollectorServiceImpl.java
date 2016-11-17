@@ -2,7 +2,7 @@ package com.crossover.trial.weather.service.impl;
 
 import java.io.Serializable;
 
-import com.crossover.trial.weather.dto.AirportData;
+import com.crossover.trial.weather.dto.AirportDto;
 import com.crossover.trial.weather.dto.AtmosphericInformation;
 import com.crossover.trial.weather.dto.DataPoint;
 import com.crossover.trial.weather.enums.DataPointType;
@@ -107,8 +107,8 @@ public class WeatherCollectorServiceImpl implements WeatherCollectorService, Ser
      * @return the added airport
      */
 	@Override
-    public AirportData addAirport(String iataCode, double latitude, double longitude) {
-        AirportData ad = new AirportData();
+    public AirportDto addAirport(String iataCode, double latitude, double longitude) {
+        AirportDto ad = new AirportDto();
         queryService.getAirportData().add(ad);
 
         AtmosphericInformation ai = new AtmosphericInformation();

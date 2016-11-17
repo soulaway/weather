@@ -1,4 +1,4 @@
-package com.crossover.trial.weather.rest.impl;
+package com.crossover.trial.weather.rest;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
+import com.crossover.trial.weather.WeatherQueryEndpoint;
 import com.crossover.trial.weather.dto.AtmosphericInformation;
-import com.crossover.trial.weather.rest.WeatherQueryEndpoint;
 import com.crossover.trial.weather.service.WeatherQueryService;
 import com.google.gson.Gson;
 

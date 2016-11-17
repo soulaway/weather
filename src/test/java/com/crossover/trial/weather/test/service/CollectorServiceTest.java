@@ -1,11 +1,11 @@
 package com.crossover.trial.weather.test.service;
 
+import com.crossover.trial.weather.WeatherCollectorEndpoint;
+import com.crossover.trial.weather.WeatherQueryEndpoint;
 import com.crossover.trial.weather.dto.AtmosphericInformation;
 import com.crossover.trial.weather.dto.DataPoint;
-import com.crossover.trial.weather.rest.WeatherCollectorEndpoint;
-import com.crossover.trial.weather.rest.WeatherQueryEndpoint;
-import com.crossover.trial.weather.rest.impl.RestWeatherCollectorEndpoint;
-import com.crossover.trial.weather.rest.impl.RestWeatherQueryEndpoint;
+import com.crossover.trial.weather.rest.RestWeatherCollectorEndpoint;
+import com.crossover.trial.weather.rest.RestWeatherQueryEndpoint;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

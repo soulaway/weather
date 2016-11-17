@@ -11,9 +11,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author code test administrator
  */
-public class AirportData implements Serializable {
+public class AirportDto implements Serializable {
 
-	private static final long serialVersionUID = AirportData.class.getName().hashCode();
+	private static final long serialVersionUID = AirportDto.class.getName().hashCode();
 
 	/** the three letter IATA code */
 	private String iata;
@@ -60,7 +60,7 @@ public class AirportData implements Serializable {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		AirportData a = (AirportData) o;
+		AirportDto a = (AirportDto) o;
 
 		return true && Objects.equals(iata, a.getIata()) && latitude == a.getLatitude()
 				&& longitude == a.getLongitude();
