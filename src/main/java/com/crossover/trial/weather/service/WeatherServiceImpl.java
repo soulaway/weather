@@ -94,6 +94,9 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
             	result.addAll(a.getWeather());
             }
 		});
+    	System.out.println("findWeatherByRadius " + result.toString());
+    	System.out.println("requestFrequency: " + requestFrequency.toString());
+    	System.out.println("radiusFreq: " + radiusFreq.toString());
     	return result;
 	}
 	
@@ -107,8 +110,15 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
 	}
 	
     private void updateRequestFrequency(String iata, Double radius) {
-        requestFrequency.getOrDefault(iata, new AtomicInteger(0)).incrementAndGet();
-        radiusFreq.getOrDefault(radius, new AtomicInteger(0)).incrementAndGet();
+    	
+    	AtomicInteger prevReqF = requestFrequency.putIfAbsent(iata, new AtomicInteger(0));
+        AtomicInteger prevRadF = radiusFreq.putIfAbsent(radius, new AtomicInteger(0));
+    	if (prevReqF != null){
+    		System.out.println("upd  reqF " + iata + " :: " + prevReqF.incrementAndGet());
+    	}
+    	if (prevRadF != null){
+    		System.out.println("upd  radF " + radius + " :: " + prevRadF.incrementAndGet());
+    	}
     }
 	
     //TODO make light
@@ -161,6 +171,7 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
         double a =  Math.pow(Math.sin(deltaLat / 2), 2) + Math.pow(Math.sin(deltaLon / 2), 2)
                 * Math.cos(ad1.getLatitude()) * Math.cos(ad2.getLatitude());
         double c = 2 * Math.asin(Math.sqrt(a));
+        System.out.println("Distance :: " + R * c);
         return R * c;
     }
 
@@ -190,19 +201,13 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
 		}
 	}
 	
-	public Airport putAirport(String iataCode, double latitude, double longitude){
-		System.out.println("PUT :: " + iataCode);
-		System.out.println("TO :: " + airports.size());
-		Airport result = airports.put(iataCode, new Airport().withIata(iataCode).withLatitude(latitude).withLongitude(longitude));
-		System.out.println(airports.containsKey(iataCode));
-		return result; 
-	}
-	
 	@Override
 	public Airport addAirport(String iataCode, double latitude, double longitude) {
 		if (iataCode == null || iataCode.isEmpty()){
 			throw new MissingMandatoryAttrException(iataCode);
 		}
-		return putAirport(iataCode, latitude, longitude); 
+		Airport result = new Airport().withIata(iataCode).withLatitude(latitude).withLongitude(longitude);
+		airports.put(iataCode, result);
+		return result; 
 	}
 }

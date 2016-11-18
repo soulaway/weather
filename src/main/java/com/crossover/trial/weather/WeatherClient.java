@@ -66,7 +66,7 @@ public class WeatherClient {
     public static void main(String[] args) {
         WeatherClient wc = new WeatherClient();
         wc.pingCollect();
-        wc.populate("wind", 0, 10, 6, 4, 20);
+        wc.populate("WIND", 0, 10, 6, 4, 20);
 
         wc.query("BOS");
         wc.query("JFK");

@@ -1,6 +1,7 @@
 package com.crossover.trial.weather.test.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.List;
 import java.util.Map;
@@ -21,26 +22,27 @@ public class WeatherServiceTest {
 	private WeatherService service = new WeatherServiceImpl();
 	
 	private static String D_IATA = "BOS";
-	private static double D_LAT = 47.991397;
-	private static double D_LON = 37.897943;
+	private static String D_TYPE_WIND = WeatherPointType.WIND.getCode();
+	private static double D_LAT = 42.364347;
+	private static double D_LON = -71.005181;
 	private static double D_MEAN = 20;
 	private static int D_FIRST = 22;
 	private static int D_SECOND = 10;
 	private static int D_THIRD = 30;
 	private static int D_COUNT = 20;
 	
-	private Airport airport = new Airport();
+	private Airport airport = new Airport().withIata(D_IATA).withLatitude(D_LAT).withLongitude(D_LON);
+	private WeatherPoint weatherPoint = new WeatherPoint(D_TYPE_WIND)
+			.withFirst(D_FIRST)
+			.withSecond(D_SECOND)
+			.withMean(D_MEAN)
+			.withThird(D_THIRD)
+			.withCount(D_COUNT);
 	
 	@Before
 	public void loadTestData(){
-		airport.withIata(D_IATA).withLatitude(D_LAT).withLongitude(D_LON);
 		service.addAirport(D_IATA, D_LAT, D_LON);
-		WeatherPointType.getFirstByCode(WeatherPointType.WIND.getCode(), airport.getWeather())
-		.withFirst(D_FIRST)
-		.withSecond(D_SECOND)
-		.withMean(D_MEAN)
-		.withThird(D_THIRD)
-		.withCount(D_COUNT);
+		service.updateWeatherPoint(D_IATA, D_TYPE_WIND, weatherPoint);
 	} 
 	
 	@Test
@@ -62,19 +64,37 @@ public class WeatherServiceTest {
 		assertEquals(service.findAirport("WRONG"), airport);
 	}
 	
-/*	@Test
+	@Test
 	public void getWeather(){
 		List<WeatherPoint> weather = service.getWeather(D_IATA, 0.0);
-		assertEquals(weather, airport.getWeather());
+		for (WeatherPoint wp : weather){
+			//assuming @loadTestData updates only WIND WP with parameters
+			if (wp.getTypeCode() != D_TYPE_WIND){
+				//rest WeatherPoints parameters expected to be 0
+				assertEquals(wp.getFirst(), 0);
+				assertEquals(wp.getSecond(), 0);
+				assertEquals(wp.getThird(), 0);
+				assertEquals(wp.getMean(), 0.0, 0);
+				assertEquals(wp.getLastUpdateTime(),0);
+			} else {
+				assertEquals(wp.getFirst(), D_FIRST);
+				assertEquals(wp.getSecond(), D_SECOND);
+				assertEquals(wp.getThird(), D_THIRD);
+				assertEquals(wp.getMean(), D_MEAN, 0.1);
+				assertNotEquals(wp.getLastUpdateTime(), 0);
+			}
+		}
 		assertEquals(weather.size(), WeatherPointType.values().length);
 	}
 	
 	@Test
 	public void getWeatherWithRadius(){
-		List<WeatherPoint> weather = service.getWeather(D_IATA, 500.0);
-		assertEquals(weather, airport.getWeather());
-		//assertEquals(weather.size(), WeatherPointType.values().length);
-	}*/
+		service.addAirport("EWR", 40.6925, -74.168667);
+		service.addAirport("JFK", 40.639751, -73.778925);
+		service.addAirport("LGA", 40.777245, -73.872608);
+		List<WeatherPoint> weather = service.getWeather("JFK", 200.0);
+		assertEquals(weather.size(), WeatherPointType.values().length * 3);
+	}
 	
 	@Test
 	public void updateWeather(){
