@@ -18,35 +18,35 @@ public enum WeatherPointType {
 		public boolean isMeanFilterApply(double mean) {
 			return mean >= 0;
 		}
-	}, 
+	},
 	TEMPERATURE("TEMPERATURE") {
 		@Override
 		public boolean isMeanFilterApply(double mean) {
 			return (mean >= -50 && mean < 100);
 		}
-	}, 
+	},
 	HUMIDTY("HUMIDTY") {
 		@Override
 		public boolean isMeanFilterApply(double mean) {
 			return (mean >= 0 && mean < 100);
 		}
-	}, 
+	},
 	PRESSURE("PRESSURE") {
 		@Override
 		public boolean isMeanFilterApply(double mean) {
 			return (mean >= 650 && mean < 800);
 		}
-	}, 
+	},
 	CLOUDCOVER("CLOUDCOVER") {
 		@Override
 		public boolean isMeanFilterApply(double mean) {
 			return (mean >= 0 && mean < 100);
 		}
-	}, 
+	},
 	PRECIPITATION("PRECIPITATION") {
 		@Override
 		public boolean isMeanFilterApply(double mean) {
-			return (mean >=0 && mean < 100);
+			return (mean >= 0 && mean < 100);
 		}
 	};
 
@@ -73,8 +73,8 @@ public enum WeatherPointType {
 	}
 
 	public static WeatherPoint getFirstByCode(String code, List<WeatherPoint> points) {
-		Optional<WeatherPoint> result =  points.stream().filter(p -> p.getTypeCode().equals(code)).findFirst();
-		if (result.isPresent()){
+		Optional<WeatherPoint> result = points.stream().filter(p -> p.getTypeCode().equals(code)).findFirst();
+		if (result.isPresent()) {
 			return result.get();
 		} else {
 			throw new InvalidEnumValueException("WeatherPointType", code);
@@ -90,10 +90,12 @@ public enum WeatherPointType {
 		});
 		return result;
 	}
-	
+
 	/**
 	 * Indicates if particular value of the WeatherPoint needs to be updated
-	 * @param mean filtered value
+	 * 
+	 * @param mean
+	 *            filtered value
 	 * @return true - value should be updated
 	 */
 	public abstract boolean isMeanFilterApply(double mean);

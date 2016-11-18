@@ -11,7 +11,7 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Implementation of the @GuiceServletContextListener. 
+ * Implementation of the @GuiceServletContextListener.
  * "Logical place to hold the Dependency Injector" (c) Guice Team.
  * 
  * Defines the producers of the application resources.
@@ -23,7 +23,7 @@ import com.google.inject.servlet.ServletModule;
 public class GuiceConfigContextListener extends GuiceServletContextListener {
 
 	public static Injector injector;
-	
+
 	@Override
 	protected Injector getInjector() {
 

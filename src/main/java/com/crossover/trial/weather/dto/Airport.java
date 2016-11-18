@@ -18,13 +18,13 @@ import com.crossover.trial.weather.enums.WeatherPointType;
 public class Airport implements Serializable {
 
 	private static final long serialVersionUID = Airport.class.getName().hashCode();
-	
+
 	private final List<WeatherPoint> weather;
-	
+
 	public List<WeatherPoint> getWeather() {
 		return weather;
 	}
-	
+
 	/** the three letter IATA code */
 	private String iata;
 
@@ -33,17 +33,18 @@ public class Airport implements Serializable {
 
 	/** longitude value in degrees */
 	private double longitude;
-	
+
 	/**
-	 * Each Airport already have several WeatherPoints one per each @WeatherPointType
+	 * Each Airport already have several WeatherPoints one per
+	 * each @WeatherPointType
 	 */
-	public Airport(){
-		 weather = new ArrayList<WeatherPoint>(WeatherPointType.values().length);
-		 for (WeatherPointType wp : WeatherPointType.values()){
-			 weather.add(new WeatherPoint(wp.getCode()));
-		 }
+	public Airport() {
+		weather = new ArrayList<WeatherPoint>(WeatherPointType.values().length);
+		for (WeatherPointType wp : WeatherPointType.values()) {
+			weather.add(new WeatherPoint(wp.getCode()));
+		}
 	}
-	
+
 	public String getIata() {
 		return iata;
 	}

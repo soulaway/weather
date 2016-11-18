@@ -11,12 +11,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author code test administrator
  */
-public class WeatherPoint implements Serializable{
+public class WeatherPoint implements Serializable {
 
 	private static final long serialVersionUID = WeatherPoint.class.getName().hashCode();
 
 	private String typeCode;
-	
+
 	private double mean;
 
 	private int first;
@@ -26,17 +26,17 @@ public class WeatherPoint implements Serializable{
 	private int third;
 
 	private int count;
-	
+
 	private long lastUpdateTime;
-	
+
 	@Deprecated
-	public WeatherPoint(){	
+	public WeatherPoint() {
 	}
-	
-	public WeatherPoint(String typeCode){
+
+	public WeatherPoint(String typeCode) {
 		this.typeCode = typeCode;
 	}
-	
+
 	public String getTypeCode() {
 		return typeCode;
 	}
@@ -45,7 +45,7 @@ public class WeatherPoint implements Serializable{
 		this.typeCode = typeCode;
 		return this;
 	}
-	
+
 	public double getMean() {
 		return mean;
 	}
@@ -99,11 +99,11 @@ public class WeatherPoint implements Serializable{
 	public void setLastUpdateTime(long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-	
+
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this, ToStringStyle.JSON_STYLE);
 	}
-	
+
 	@Override
 	public boolean equals(java.lang.Object o) {
 		if (this == o) {
@@ -114,8 +114,8 @@ public class WeatherPoint implements Serializable{
 		}
 		WeatherPoint dp = (WeatherPoint) o;
 
-		return true && typeCode.equals(dp.getTypeCode()) && mean == dp.getMean() && first == dp.getFirst() && second == dp.getSecond()
-				&& third == dp.getThird() && count == dp.getCount();
+		return true && typeCode.equals(dp.getTypeCode()) && mean == dp.getMean() && first == dp.getFirst()
+				&& second == dp.getSecond() && third == dp.getThird() && count == dp.getCount();
 	}
 
 	@Override

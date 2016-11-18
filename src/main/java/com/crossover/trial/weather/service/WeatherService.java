@@ -14,18 +14,18 @@ import com.crossover.trial.weather.dto.WeatherPoint;
  */
 
 public interface WeatherService {
-	
+
 	List<Airport> getAirports();
-	
+
 	Airport findAirport(String iataCode);
-	
+
 	List<WeatherPoint> getWeather(String iata, double radius);
-	
+
 	Map<String, Object> getHelthStatus();
-	
+
 	Airport deleteAirport(String iataCode);
-	
+
 	Airport addAirport(String iataCode, double latitude, double longitude);
-	
+
 	WeatherPoint updateWeatherPoint(String iataCode, String pointType, WeatherPoint dp);
 }
