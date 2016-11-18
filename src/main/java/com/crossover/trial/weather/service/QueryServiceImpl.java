@@ -16,6 +16,8 @@ import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.dto.WeatherPoint;
 import com.crossover.trial.weather.enums.WeatherPointType;
 import com.crossover.trial.weather.exception.InvalidEnumValueException;
+import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
+import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.google.inject.Singleton;
 
 @Singleton
@@ -48,36 +50,51 @@ public class QueryServiceImpl implements QueryService , Serializable{
 
 	@Override
 	public Airport findAirport(String iataCode) {
+		checkIata(iataCode);
 		return airports.get(iataCode);
 	}
 
 	@Override
-	public List<WeatherPoint> getWeather(String iata, String radiusString) {
-        double radius = radiusString == null || radiusString.trim().isEmpty() ? 0 : Double.valueOf(radiusString);
-        
+	public List<WeatherPoint> getWeather(String iata, double radius) {
+		checkIata(iata);
         updateRequestFrequency(iata, radius);
-        
-        List<WeatherPoint> result = new ArrayList<>();
         if (radius == 0) {
-        	result.addAll(airports.get(iata).getWeather());
+        	List<WeatherPoint> weather = airports.get(iata).getWeather();
+        	List<WeatherPoint> result = new ArrayList<>(weather.size());
+        	result.addAll(weather);
+        	return result;
         } else {
-        	Airport ad = airports.get(iata);
-        	List<Airport> airports = getAirports();
-        	airports.stream().forEach(a -> {
-        		if (calculateDistance(ad, a) <= radius){
-                	result.addAll(a.getWeather());
-                }
-    		});
+        	return findWeatherByRadius(iata, radius);
         }
-		return result;
 	}
 	
+	private List<WeatherPoint> findWeatherByRadius(String iata, double radius){
+		List<WeatherPoint> result = new ArrayList<>();
+    	Airport ad = airports.get(iata);
+    	List<Airport> airports = getAirports();
+    	airports.stream().forEach(a -> {
+    		if (calculateDistance(ad, a) <= radius){
+            	result.addAll(a.getWeather());
+            }
+		});
+    	return result;
+	}
+	
+	private void checkIata(String iataCode){
+		if (iataCode == null || iataCode.isEmpty()){
+			throw new MissingMandatoryAttrException(iataCode);
+		}
+		if (!airports.containsKey(iataCode)){
+			throw new UnknownIataCodeException(iataCode);
+		}		
+	}
 	
     private void updateRequestFrequency(String iata, Double radius) {
         requestFrequency.getOrDefault(iata, new AtomicInteger(0)).incrementAndGet();
         radiusFreq.getOrDefault(radius, new AtomicInteger(0)).incrementAndGet();
     }
 	
+    //TODO make light
 	@Override
 	public Map<String, Object> getHelthStatus() {
         Map<String, Object> retval = new HashMap<>();
@@ -132,11 +149,13 @@ public class QueryServiceImpl implements QueryService , Serializable{
 
 	@Override
 	public Airport deleteAirport(String iataCode) {
+		checkIata(iataCode);
 		return airports.remove(iataCode);
 	}
 	
 	@Override
 	public WeatherPoint updateWeatherPoint(String iataCode, String pointType, WeatherPoint dp) {
+		checkIata(iataCode);
 		Airport a = findAirport(iataCode);
 		Optional<WeatherPoint> w = a.getWeather().stream().filter(wp -> wp.getTypeCode().equals(pointType)).findFirst();
 		if (w.isPresent()) {
@@ -160,7 +179,9 @@ public class QueryServiceImpl implements QueryService , Serializable{
 	
 	@Override
 	public Airport addAirport(String iataCode, double latitude, double longitude) {
-		// TODO params checks
+		if (iataCode == null || iataCode.isEmpty()){
+			throw new MissingMandatoryAttrException(iataCode);
+		}
 		return putAirport(new Airport().withIata(iataCode).withLatitude(latitude).withLongitude(longitude)); 
 	}
 }

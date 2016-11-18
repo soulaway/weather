@@ -11,7 +11,11 @@ import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.WeatherCollectorEndpoint;
 import com.crossover.trial.weather.dto.Airport;
+import com.crossover.trial.weather.dto.WeatherPoint;
 import com.crossover.trial.weather.exception.BusinessException;
+import com.crossover.trial.weather.exception.InvalidParamTypeException;
+import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
+import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.QueryService;
 import com.google.gson.Gson;
 import com.google.inject.Singleton;
@@ -44,7 +48,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
                                   String datapointJson) {
         try {
         	Gson gson = new Gson();
-        	//collectorService.addDataPoint(iataCode, pointType, gson.fromJson(datapointJson, WeatherPoint.class));
+        	queryService.updateWeatherPoint(iataCode, pointType, gson.fromJson(datapointJson, WeatherPoint.class));
         } catch (BusinessException e) {
             e.printStackTrace();
         }
@@ -55,17 +59,21 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
     @Override
     public Response getAirports() {
         Set<String> retval = new HashSet<>();
-/*        for (Airport ad : queryService.getAirportData()) {
+        for (Airport ad : queryService.getAirports()) {
             retval.add(ad.getIata());
-        }*/
+        }
         return Response.status(Response.Status.OK).entity(retval).build();
     }
 
 
     @Override
     public Response getAirport(@PathParam("iata") String iata) {
-        Airport ad = null;//queryService.findAirportData(iata);
-        return Response.status(Response.Status.OK).entity(ad).build();
+    	try{
+    		Airport a = queryService.findAirport(iata);
+    		return Response.status(Response.Status.OK).entity(a).build();
+    	} catch (MissingMandatoryAttrException | UnknownIataCodeException e) {
+    		return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+    	}        
     }
 
 
@@ -73,14 +81,32 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
     public Response addAirport(@PathParam("iata") String iata,
                                @PathParam("lat") String latString,
                                @PathParam("long") String longString) {
-    	queryService.addAirport(iata, Double.valueOf(latString), Double.valueOf(longString));
-        return Response.status(Response.Status.OK).build();
+		try {
+			if (latString == null || latString.isEmpty()){
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MissingMandatoryAttrException("lattitude")).build();
+			}
+			if (longString == null || longString.isEmpty()){
+				return Response.status(Response.Status.BAD_REQUEST).entity(new MissingMandatoryAttrException("longitude")).build();
+			}
+	    	queryService.addAirport(iata, Double.valueOf(latString), Double.valueOf(longString));
+	        return Response.status(Response.Status.OK).build();
+		} catch (NumberFormatException | MissingMandatoryAttrException | UnknownIataCodeException e) {
+			if (e.getClass().equals(NumberFormatException.class)){
+				return Response.status(Response.Status.BAD_REQUEST).entity(new InvalidParamTypeException("Radius", Double.class.getSimpleName())).build();
+			}
+			return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+	    }
     }
 
 
     @Override
     public Response deleteAirport(@PathParam("iata") String iata) {
-        return Response.status(Response.Status.NOT_IMPLEMENTED).build();
+    	try{
+    		queryService.deleteAirport(iata);
+    		return Response.status(Response.Status.OK).build();
+    	} catch (MissingMandatoryAttrException | UnknownIataCodeException e) {
+    		return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+    	}
     }
 
     @Override

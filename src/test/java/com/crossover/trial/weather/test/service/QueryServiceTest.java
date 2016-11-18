@@ -11,6 +11,8 @@ import org.junit.Test;
 import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.dto.WeatherPoint;
 import com.crossover.trial.weather.enums.WeatherPointType;
+import com.crossover.trial.weather.exception.InvalidEnumValueException;
+import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.QueryService;
 import com.crossover.trial.weather.service.QueryServiceImpl;
 
@@ -52,14 +54,53 @@ public class QueryServiceTest {
 	}
 	@Test
 	public void findAirport(){
-		assertEquals(service.findAirport("BOS"), airport);
+		assertEquals(service.findAirport(D_IATA), airport);
 	}
+	
+	@Test(expected=UnknownIataCodeException.class)
+	public void findAirportWrongIata(){
+		assertEquals(service.findAirport("WRONG"), airport);
+	}
+	
 	@Test
 	public void getWeather(){
-		List<WeatherPoint> weather = service.getWeather(D_IATA, "0");
+		List<WeatherPoint> weather = service.getWeather(D_IATA, 0.0);
 		assertEquals(weather, airport.getWeather());
 		assertEquals(weather.size(), WeatherPointType.values().length);
 	}
+	
+	@Test
+	public void getWeatherWithRadius(){
+		List<WeatherPoint> weather = service.getWeather(D_IATA, 500.0);
+		assertEquals(weather, airport.getWeather());
+		//assertEquals(weather.size(), WeatherPointType.values().length);
+	}
+	
+	@Test
+	public void updateWeather(){
+		String code = WeatherPointType.CLOUDCOVER.getCode();
+		
+		WeatherPoint w = new WeatherPoint(code)
+		.withFirst(D_FIRST)
+		.withSecond(D_SECOND)
+		.withMean(D_MEAN)
+		.withThird(D_THIRD)
+		.withCount(D_COUNT);
+		
+		WeatherPoint responded = service.updateWeatherPoint(D_IATA, code, w);
+		assertEquals(responded, w);
+		List<WeatherPoint> airportWeather = service.getWeather(D_IATA, 0.0);
+		WeatherPoint target = WeatherPointType.getFirstByCode(code, airportWeather);
+		assertEquals(target, w);
+	}
+	
+	@Test(expected=InvalidEnumValueException.class)
+	public void updateWeatherWrongTypeCode(){
+		String code = "WRONG";
+		WeatherPoint w = new WeatherPoint(code);
+		service.updateWeatherPoint(D_IATA, code, w);
+	}
+	
 	@Test
 	public void getHelthStatus(){
 		Map<String, Object> stat = service.getHelthStatus();

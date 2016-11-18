@@ -9,6 +9,9 @@ import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.WeatherQueryEndpoint;
 import com.crossover.trial.weather.dto.WeatherPoint;
+import com.crossover.trial.weather.exception.InvalidParamTypeException;
+import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
+import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.QueryService;
 import com.google.gson.Gson;
 import com.google.inject.servlet.RequestScoped;
@@ -52,7 +55,14 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
      */
     @Override
     public Response weather(String iata, String radiusString) {
-        List<WeatherPoint> retval = queryService.getWeather(iata, radiusString);
-        return Response.status(Response.Status.OK).entity(retval).build();
+		try {
+			double radius = radiusString == null || radiusString.trim().isEmpty() ? 0 : Double.valueOf(radiusString);
+	        List<WeatherPoint> retval = queryService.getWeather(iata, radius);
+	        return Response.status(Response.Status.OK).entity(retval).build();
+		} catch (NumberFormatException e) {
+			return Response.status(Response.Status.BAD_REQUEST).entity(new InvalidParamTypeException("Radius", Double.class.getSimpleName())).build();
+	    } catch (MissingMandatoryAttrException | UnknownIataCodeException e){
+	    	return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+	    }
     }
 }

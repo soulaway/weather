@@ -12,7 +12,7 @@ public interface QueryService {
 	
 	Airport findAirport(String iataCode);
 	
-	List<WeatherPoint> getWeather(String iata, String radiusString);
+	List<WeatherPoint> getWeather(String iata, double radius);
 	
 	Map<String, Object> getHelthStatus();
 	
