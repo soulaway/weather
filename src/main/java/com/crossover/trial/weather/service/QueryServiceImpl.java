@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class QueryServiceImpl implements QueryService , Serializable{
     /** earth radius in KM */
     public static final double R = 6372.8;
     
-    public static final long DAY_LENGTH_MILIS = 86400000;
+    public static final long DAY_LENGTH_MILIS = TimeUnit.DAYS.toMillis(1);
     
 	// key: iataCode; value: Airport
 	ConcurrentHashMap<String, Airport> airports = new ConcurrentHashMap<>();

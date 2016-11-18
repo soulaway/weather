@@ -56,7 +56,7 @@ public class QueryServiceTest {
 	}
 	@Test
 	public void getWeather(){
-		List<WeatherPoint> weather = service.getWeather("BOS", "0");
+		List<WeatherPoint> weather = service.getWeather(D_IATA, "0");
 		assertEquals(weather, airport.getWeather());
 		assertEquals(weather.size(), WeatherPointType.values().length);
 	}
@@ -67,7 +67,7 @@ public class QueryServiceTest {
 	}
 	@Test
 	public void deleteAirport(){
-		Airport a = service.deleteAirport("BOS");
+		Airport a = service.deleteAirport(D_IATA);
 		assertEquals(service.getAirports().size(), 0);
 		assertEquals(airport, a);
 	}

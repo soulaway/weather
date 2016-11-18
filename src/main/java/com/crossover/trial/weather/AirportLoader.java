@@ -1,36 +1,70 @@
 package com.crossover.trial.weather;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import java.io.*;
+import javax.ws.rs.core.Response;
+
+import com.crossover.trial.weather.dto.Airport;
 
 /**
  * A simple airport loader which reads a file from disk and sends entries to the webservice
  *
- * TODO: Implement the Airport Loader
- * 
  * @author code test administrator
  */
 public class AirportLoader {
-
-    /** end point for read queries */
-    private WebTarget query;
-
+	
+	private static final int IATA_CSV_HEADER_IDX = 4;
+	private static final int LAT_CSV_HEADER_IDX = 6;
+	private static final int LON_CSV_HEADER_IDX = 7;
+	
     /** end point to supply updates */
     private WebTarget collect;
 
     public AirportLoader() {
         Client client = ClientBuilder.newClient();
-        query = client.target("http://localhost:8080/query");
-        collect = client.target("http://localhost:8080/collect");
+        collect = client.target("http://localhost:9090/collect");
     }
 
-    public void upload(InputStream airportDataStream) throws IOException{
-        BufferedReader reader = new BufferedReader(new InputStreamReader(airportDataStream));
-        String l = null;
-        while ((l = reader.readLine()) != null) {
-            break;
+    public static Function<String, Airport> mapToAirport = (line) -> {
+      String[] p = line.split(",");
+      return new Airport().withIata(p[IATA_CSV_HEADER_IDX].substring(1, p[IATA_CSV_HEADER_IDX].length()-1))
+    		  .withLatitude(Double.parseDouble(p[LAT_CSV_HEADER_IDX]))
+    		  .withLongitude(Double.parseDouble(p[LON_CSV_HEADER_IDX]));
+    };
+    
+    public boolean isServerResponds() {
+        WebTarget path = collect.path("/ping");
+        Response response = path.request().get();
+        boolean result = !response.readEntity(String.class).isEmpty();
+        response.close();
+        return result;
+    }
+    
+    @SuppressWarnings("resource")
+	public void upload(String filePath) throws IOException{
+    	long milis = System.currentTimeMillis();
+    	Stream<String> stream = Files.lines(Paths.get(filePath));
+        List<Airport> airports = stream.map(mapToAirport).collect(Collectors.toList());
+        
+        System.out.println(airports.size() + " records parsed for " + (System.currentTimeMillis() - milis));
+        if (isServerResponds()){
+        	long ms = System.currentTimeMillis();
+	        for (Airport airport: airports){
+	        	WebTarget wt = collect.path("/airport/"+airport.getIata()+"/"+airport.getLatitude()+"/"+airport.getLongitude());
+	        	wt.request().post(Entity.json(null));
+	        }
+	        System.out.println(airports.size() + " records sended to server for " + (System.currentTimeMillis() - ms));
         }
     }
 
@@ -42,7 +76,7 @@ public class AirportLoader {
         }
 
         AirportLoader al = new AirportLoader();
-        al.upload(new FileInputStream(airportDataFile));
+        al.upload(args[0]);
         System.exit(0);
     }
 }

@@ -2,6 +2,9 @@ package com.crossover.trial.weather.dto;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * A collected point, including some information about the range of collected
  * values
@@ -91,6 +94,10 @@ public class WeatherPoint implements Serializable{
 
 	public void setLastUpdateTime(long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
+	}
+	
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this, ToStringStyle.JSON_STYLE);
 	}
 	
 	@Override

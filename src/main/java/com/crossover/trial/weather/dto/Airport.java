@@ -35,7 +35,7 @@ public class Airport implements Serializable {
 	private double longitude;
 	
 	/**
-	 * Each Airport already have several WeatherPoints one per @WeatherPointType
+	 * Each Airport already have several WeatherPoints one per each @WeatherPointType
 	 */
 	public Airport(){
 		 weather = new ArrayList<WeatherPoint>(WeatherPointType.values().length);
