@@ -111,8 +111,8 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
 	
     private void updateRequestFrequency(String iata, Double radius) {
     	
-    	AtomicInteger prevReqF = requestFrequency.putIfAbsent(iata, new AtomicInteger(0));
-        AtomicInteger prevRadF = radiusFreq.putIfAbsent(radius, new AtomicInteger(0));
+    	AtomicInteger prevReqF = requestFrequency.putIfAbsent(iata, new AtomicInteger(1));
+        AtomicInteger prevRadF = radiusFreq.putIfAbsent(radius, new AtomicInteger(1));
     	if (prevReqF != null){
     		System.out.println("upd  reqF " + iata + " :: " + prevReqF.incrementAndGet());
     	}
@@ -121,43 +121,45 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
     	}
     }
 	
-    //TODO make light
 	@Override
 	public Map<String, Object> getHelthStatus() {
         Map<String, Object> retval = new HashMap<>();
         List<Airport> airports = getAirports();
-        
         // counts all WeatherPoints updated today
     	long count = 0;
     	for (Airport a : airports){
     		count += a.getWeather().stream().filter(wp -> wp.getLastUpdateTime() > (System.currentTimeMillis() - DAY_LENGTH_MILIS)).count();
     	}
     	retval.put("datasize", count);
-    	
-    	// counts getWeather requests frequency per each requested airport
+        retval.put("iata_freq", countResponceFrequency());
+        retval.put("radius_freq", calculateRadiusHistory());
+    	return retval;
+	}
+	
+	private  Map<String, Double> countResponceFrequency(){
         Map<String, Double> freq = new HashMap<>();
         if (requestFrequency.size() > 0){
-	        for (Airport a : airports){
-	        	int counter = requestFrequency.get(a.getIata()).get();
-	            double frac = (double)(counter/requestFrequency.size());
-	            freq.put(a.getIata(), frac);
+	        for (String iata : airports.keySet()){
+	        	if (requestFrequency.containsKey(iata)){
+		        	int counter = requestFrequency.get(iata).get();
+		            double frac = (double)(counter/requestFrequency.size());
+		            freq.put(iata, frac);
+	        	}
 	        }
         }
-        retval.put("iata_freq", freq);
-        
-        // TODO understand what's the point of this radiusFreq.. hist..
-        List<Integer> hist = new ArrayList<Integer>(radiusFreq.size());
-        if (radiusFreq.size() > 0){
+        return freq;
+	}
+	
+	private List<Integer> calculateRadiusHistory(){
+	    List<Integer> hist = new ArrayList<Integer>(radiusFreq.size());
+	    if (radiusFreq.size() > 0){
 	        for (Map.Entry<Double, AtomicInteger> e : radiusFreq.entrySet()) {
 	            int i = e.getKey().intValue() % 10;
 	            hist.set(i, hist.get(i) + e.getValue().get());
 	        }
-        }
-        retval.put("radius_freq", hist);
-        
-    	return retval;
+	    }
+	    return hist;
 	}
-
     /**
      * Haversine distance between two airports.
      *
