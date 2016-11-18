@@ -2,8 +2,8 @@ package com.crossover.trial.weather;
 
 import com.crossover.trial.weather.rest.RestWeatherCollectorEndpoint;
 import com.crossover.trial.weather.rest.RestWeatherQueryEndpoint;
-import com.crossover.trial.weather.service.QueryService;
-import com.crossover.trial.weather.service.QueryServiceImpl;
+import com.crossover.trial.weather.service.WeatherService;
+import com.crossover.trial.weather.service.WeatherServiceImpl;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -11,7 +11,10 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Implementation of the ServletContextListener. Holder of the Guice Injector.
+ * Implementation of the @GuiceServletContextListener. 
+ * "Logical place to hold the Dependency Injector" (c) Guice Team.
+ * 
+ * Defines the producers of the application resources.
  * 
  * @author Dmitry Soloviev
  * 
@@ -20,33 +23,17 @@ import com.google.inject.servlet.ServletModule;
 public class GuiceConfigContextListener extends GuiceServletContextListener {
 
 	public static Injector injector;
-
+	
 	@Override
 	protected Injector getInjector() {
 
 		injector = Guice.createInjector(new ServletModule() {
 			@Override
 			protected void configureServlets() {
-				bind(QueryServiceImpl.class);
+				bind(WeatherServiceImpl.class);
 				bind(RestWeatherCollectorEndpoint.class);
 				bind(RestWeatherQueryEndpoint.class);
 			}
-
-			@Provides
-			QueryService produceQueryService() {
-				return new QueryServiceImpl();
-			}
-
-			@Provides
-			WeatherCollectorEndpoint produceWeatherCollectorEndpoint() {
-				return new RestWeatherCollectorEndpoint();
-			}
-			
-			@Provides
-			WeatherQueryEndpoint produceWeatherQueryEndpoint() {
-				return new RestWeatherQueryEndpoint();
-			}
-
 		});
 
 		return injector;

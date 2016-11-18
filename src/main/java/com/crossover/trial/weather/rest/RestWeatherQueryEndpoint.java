@@ -4,7 +4,12 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.crossover.trial.weather.WeatherQueryEndpoint;
@@ -12,7 +17,7 @@ import com.crossover.trial.weather.dto.WeatherPoint;
 import com.crossover.trial.weather.exception.InvalidParamTypeException;
 import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
 import com.crossover.trial.weather.exception.UnknownIataCodeException;
-import com.crossover.trial.weather.service.QueryService;
+import com.crossover.trial.weather.service.WeatherServiceImpl;
 import com.google.gson.Gson;
 import com.google.inject.servlet.RequestScoped;
 
@@ -29,13 +34,16 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
     public final static Logger LOGGER = Logger.getLogger(RestWeatherQueryEndpoint.class.getName());
     
     @Inject
-    public QueryService queryService;
+    public WeatherServiceImpl queryService;
     
     /**
      * Retrieve service health including total size of valid data points and request frequency information.
      *
      * @return health stats for the service as a string
      */
+    
+    @GET
+    @Path("/ping")
     @Override
     public String ping() {
     	Gson gson = new Gson();
@@ -53,16 +61,20 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
      *
      * @return a list of atmospheric information
      */
-    @Override
-    public Response weather(String iata, String radiusString) {
+    @GET
+    @Path("/weather/{iata}/{radius}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response weather(@PathParam("iata") String iata, @PathParam("radius") String radiusString) {
 		try {
 			double radius = radiusString == null || radiusString.trim().isEmpty() ? 0 : Double.valueOf(radiusString);
+			System.out.println("weather: " + iata + "  " + radiusString);
 	        List<WeatherPoint> retval = queryService.getWeather(iata, radius);
 	        return Response.status(Response.Status.OK).entity(retval).build();
 		} catch (NumberFormatException e) {
-			return Response.status(Response.Status.BAD_REQUEST).entity(new InvalidParamTypeException("Radius", Double.class.getSimpleName())).build();
+			return Response.status(Response.Status.BAD_REQUEST).entity(new InvalidParamTypeException("Radius", Double.class.getSimpleName()).getMessage()).build();
 	    } catch (MissingMandatoryAttrException | UnknownIataCodeException e){
-	    	return Response.status(Response.Status.BAD_REQUEST).entity(e).build();
+	    	return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
 	    }
     }
 }

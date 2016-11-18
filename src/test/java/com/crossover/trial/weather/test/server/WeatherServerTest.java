@@ -6,6 +6,7 @@ import java.net.URI;
 import javax.servlet.ServletException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -43,10 +44,24 @@ public class WeatherServerTest {
         Response response = client.target("http://localhost:8282/query/ping").request().get();
         Assert.assertEquals(200, response.getStatus());
     }
-
+    
+/*    @Test
+    public void testQueryGetWeather() {
+        Response response = client.target("http://localhost:8282/query/weather").request().get();
+        Assert.assertEquals(200, response.getStatus());
+    }
+  */  
     @Test
     public void testCollectPingOk() {
         Response response = client.target("http://localhost:8282/collect/ping").request().get();
         Assert.assertEquals(200, response.getStatus());
     }
+    
+/*    @Test
+    public void testCollectAirportPost() {
+        Response response = client
+        		.target("http://localhost:8282/airport/BOS/20/30")
+        		.request().post(Entity.entity(null, "application/json"));
+        Assert.assertEquals(200, response.getStatus());
+    }*/
 }

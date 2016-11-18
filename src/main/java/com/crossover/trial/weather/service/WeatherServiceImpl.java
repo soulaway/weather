@@ -20,20 +20,37 @@ import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
 import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.google.inject.Singleton;
 
-@Singleton
-public class QueryServiceImpl implements QueryService , Serializable{
+/**
+ * Singleton, represents a state-full resource object.
+ * 
+ * Implements the application business logic @WeatherService
+ * Holds data resources: @airports; @requestFrequency; @radiusFreq
+ * 
+ * @author soul
+ *
+ */
 
-	private static final long serialVersionUID = QueryServiceImpl.class.getName().hashCode();
+@Singleton
+public class WeatherServiceImpl implements WeatherService , Serializable{
+
+	private static final long serialVersionUID = WeatherServiceImpl.class.getName().hashCode();
 	
-    public final static Logger LOGGER = Logger.getLogger(QueryServiceImpl.class.getName());
+    public final static Logger LOGGER = Logger.getLogger(WeatherServiceImpl.class.getName());
 
     /** earth radius in KM */
     public static final double R = 6372.8;
     
     public static final long DAY_LENGTH_MILIS = TimeUnit.DAYS.toMillis(1);
     
-	// key: iataCode; value: Airport
-	ConcurrentHashMap<String, Airport> airports = new ConcurrentHashMap<>();
+    /**
+     * Parameters below are approximate, assuming 4xcore testing environment. Relevant values should be calculated under the load.
+     * 16 An initial capacity of map
+     * 0.9 Load factor ensures a dense packaging inside ConcurrentHashMap which will optimize memory use.
+     * 10 The concurrencyLevel will ensure that 10 threads will be able to maintain the Map concurrently.
+     */
+	
+    // key: iataCode; value: Airport
+	private Map<String, Airport> airports = new ConcurrentHashMap<String, Airport>(16, 0.9f, 10);
 	
 	// key: iataCode; value: updateCounter
     public static Map<String, AtomicInteger> requestFrequency = new HashMap<String, AtomicInteger>();
@@ -173,8 +190,12 @@ public class QueryServiceImpl implements QueryService , Serializable{
 		}
 	}
 	
-	public Airport putAirport(Airport airport){
-		return airports.putIfAbsent(airport.getIata(), airport); 
+	public Airport putAirport(String iataCode, double latitude, double longitude){
+		System.out.println("PUT :: " + iataCode);
+		System.out.println("TO :: " + airports.size());
+		Airport result = airports.put(iataCode, new Airport().withIata(iataCode).withLatitude(latitude).withLongitude(longitude));
+		System.out.println(airports.containsKey(iataCode));
+		return result; 
 	}
 	
 	@Override
@@ -182,6 +203,6 @@ public class QueryServiceImpl implements QueryService , Serializable{
 		if (iataCode == null || iataCode.isEmpty()){
 			throw new MissingMandatoryAttrException(iataCode);
 		}
-		return putAirport(new Airport().withIata(iataCode).withLatitude(latitude).withLongitude(longitude)); 
+		return putAirport(iataCode, latitude, longitude); 
 	}
 }

@@ -35,8 +35,6 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class WeatherServer {
 
-	// private static final String BASE_URL = "http://localhost:9090/";
-
 	private static final URI BASE_URI = UriBuilder.fromUri("http://127.0.0.1/").port(9090).build();
 
 	public static void main(String[] args) {
@@ -58,7 +56,17 @@ public class WeatherServer {
 			Logger.getLogger(WeatherServer.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
-
+	
+	/**
+	 * Creates a @ServletContainer with provided @Application class
+	 * And applies the @GuiceFilter for being able to DI and IOC with application resources within
+	 * predefined @GuiceConfigContextListener context listener
+	 * 
+	 * @param rsApplicationClass Application class
+	 * @return @ServletContainer
+	 * @throws ServletException
+	 */
+	
 	public static WebappContext createGuiceWebappContext(Class<? extends Application> rsApplicationClass)
 			throws ServletException {
 

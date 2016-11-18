@@ -6,7 +6,14 @@ import java.util.Map;
 import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.dto.WeatherPoint;
 
-public interface QueryService {
+/**
+ * Common application operations
+ * 
+ * @author soul
+ *
+ */
+
+public interface WeatherService {
 	
 	List<Airport> getAirports();
 	
