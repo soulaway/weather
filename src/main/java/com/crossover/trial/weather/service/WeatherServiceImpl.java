@@ -154,8 +154,7 @@ public class WeatherServiceImpl implements WeatherService , Serializable{
 	    List<Integer> hist = new ArrayList<Integer>(radiusFreq.size());
 	    if (radiusFreq.size() > 0){
 	        for (Map.Entry<Double, AtomicInteger> e : radiusFreq.entrySet()) {
-	            int i = e.getKey().intValue() % 10;
-	            hist.set(i, hist.get(i) + e.getValue().get());
+	            hist.add(e.getValue().get());
 	        }
 	    }
 	    return hist;

@@ -35,7 +35,7 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class WeatherServer {
 
-	private static final URI BASE_URI = UriBuilder.fromUri("http://127.0.0.1/").port(9090).build();
+	public static final URI BASE_URI = UriBuilder.fromUri("http://127.0.0.1/").port(9090).build();
 
 	public static void main(String[] args) {
 		try {

@@ -19,6 +19,7 @@
         <junit.version>4.12</junit.version>
         <surefire-plugin.version>2.19.1</surefire-plugin.version>
         <jacoco-plugin.version>0.7.7.201606060606</jacoco-plugin.version>
+		<resource.directory>src/main/resources</resource.directory>
     </properties>
 
     <dependencyManagement>
@@ -85,6 +86,11 @@
     </dependencies>
 
     <build>
+	    <resources>
+			<resource>
+				<directory>${resource.directory}</directory>
+			</resource>
+		</resources>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

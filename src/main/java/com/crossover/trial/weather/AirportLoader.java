@@ -2,6 +2,7 @@ package com.crossover.trial.weather;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import com.crossover.trial.weather.dto.Airport;
 
@@ -30,10 +32,11 @@ public class AirportLoader {
 	
     /** end point to supply updates */
     private WebTarget collect;
-
-    public AirportLoader() {
+    
+    
+    public AirportLoader(URI uri) {
         Client client = ClientBuilder.newClient();
-        collect = client.target("http://localhost:9090/collect");
+        collect = client.target(uri + "collect");
     }
 
     public static Function<String, Airport> mapToAirport = (line) -> {
@@ -53,18 +56,13 @@ public class AirportLoader {
     
     @SuppressWarnings("resource")
 	public void upload(String filePath) throws IOException{
-    	long milis = System.currentTimeMillis();
     	Stream<String> stream = Files.lines(Paths.get(filePath));
         List<Airport> airports = stream.map(mapToAirport).collect(Collectors.toList());
-        
-        System.out.println(airports.size() + " records parsed for " + (System.currentTimeMillis() - milis));
         if (isServerResponds()){
-        	long ms = System.currentTimeMillis();
 	        for (Airport airport: airports){
 	        	WebTarget wt = collect.path("/airport/"+airport.getIata()+"/"+airport.getLatitude()+"/"+airport.getLongitude());
 	        	wt.request().post(Entity.json(null));
 	        }
-	        System.out.println(airports.size() + " records sended to server for " + (System.currentTimeMillis() - ms));
         }
     }
 
@@ -75,7 +73,7 @@ public class AirportLoader {
             System.exit(1);
         }
 
-        AirportLoader al = new AirportLoader();
+        AirportLoader al = new AirportLoader(WeatherServer.BASE_URI);
         al.upload(args[0]);
         System.exit(0);
     }

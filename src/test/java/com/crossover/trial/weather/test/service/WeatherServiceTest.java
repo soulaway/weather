@@ -13,6 +13,7 @@ import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.dto.WeatherPoint;
 import com.crossover.trial.weather.enums.WeatherPointType;
 import com.crossover.trial.weather.exception.InvalidEnumValueException;
+import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
 import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.WeatherService;
 import com.crossover.trial.weather.service.WeatherServiceImpl;
@@ -54,6 +55,13 @@ public class WeatherServiceTest {
 		service.addAirport("DOC", 222.2, 333.3);
 		assertEquals(service.getAirports().size(), 2);
 	}
+	
+	@Test(expected=MissingMandatoryAttrException.class)
+	public void addAirportEmptyIata(){
+		service.addAirport("", 222.2, 333.3);
+		assertEquals(service.getAirports().size(), 2);
+	}
+	
 	@Test
 	public void findAirport(){
 		assertEquals(service.findAirport(D_IATA), airport);

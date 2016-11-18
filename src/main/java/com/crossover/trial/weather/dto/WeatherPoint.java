@@ -29,6 +29,10 @@ public class WeatherPoint implements Serializable{
 	
 	private long lastUpdateTime;
 	
+	@Deprecated
+	public WeatherPoint(){	
+	}
+	
 	public WeatherPoint(String typeCode){
 		this.typeCode = typeCode;
 	}
