@@ -49,24 +49,28 @@ public class IntegrationTest {
 	public void testQueryPingOk() {
 		Response response = client.target("http://localhost:8282/query/ping").request().get();
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
 	public void testQueryGetWeather() {
 		Response response = client.target("http://localhost:8282/query/weather/BOS/0").request().get();
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
 	public void testQueryGetWeatherWrongRadius() {
 		Response response = client.target("http://localhost:8282/query/weather/BOS/radius").request().get();
 		Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+		response.close();
 	}
 
 	@Test
 	public void testCollectPingOk() {
 		Response response = client.target("http://localhost:8282/collect/ping").request().get();
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
@@ -74,18 +78,21 @@ public class IntegrationTest {
 		Response response = client.target("http://localhost:8282/collect/airport/BOS/20/30").request()
 				.post(Entity.json(null));
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
 	public void testGetAirports() {
 		Response response = client.target("http://localhost:8282/collect/airports").request().get();
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
 	public void testGetAirportByCode() {
 		Response response = client.target("http://localhost:8282/collect/airport/BOS").request().get();
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
@@ -93,6 +100,7 @@ public class IntegrationTest {
 		Response response = client.target("http://localhost:8282/collect/weather/BOS/WIND").request()
 				.post(Entity.json(new WeatherPoint("WIND").withFirst(10).withSecond(40)));
 		Assert.assertEquals(200, response.getStatus());
+		response.close();
 	}
 
 	@Test
@@ -105,5 +113,6 @@ public class IntegrationTest {
 		Airport stnAirport = response.readEntity(Airport.class);
 		Assert.assertTrue(51.885 == stnAirport.getLatitude());
 		Assert.assertTrue(0.235 == stnAirport.getLongitude());
+		response.close();
 	}
 }

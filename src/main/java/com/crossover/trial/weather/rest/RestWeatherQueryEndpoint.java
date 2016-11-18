@@ -46,6 +46,7 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
 
 	@GET
 	@Path("/ping")
+	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public String ping() {
 		Gson gson = new Gson();
@@ -68,7 +69,6 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
 	@GET
 	@Path("/weather/{iata}/{radius}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
 	public Response weather(@PathParam("iata") String iata, @PathParam("radius") String radiusString) {
 		try {
 			double radius = radiusString == null || radiusString.trim().isEmpty() ? 0 : Double.valueOf(radiusString);

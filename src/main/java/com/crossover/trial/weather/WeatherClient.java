@@ -1,5 +1,8 @@
 package com.crossover.trial.weather;
 
+import java.io.IOException;
+import java.net.URL;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -30,7 +33,17 @@ public class WeatherClient {
         query = client.target(BASE_URI + "/query");
         collect = client.target(BASE_URI + "/collect");
     }
-
+    
+    public void init(){
+    	AirportLoader loader = new AirportLoader(WeatherServer.BASE_URI);
+		URL url = WeatherClient.class.getClassLoader().getResource("airports.dat");
+		try {
+			loader.upload(url.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
     public void pingCollect() {
         WebTarget path = collect.path("/ping");
         Response response = path.request().get();
@@ -64,7 +77,9 @@ public class WeatherClient {
     }
 
     public static void main(String[] args) {
+  		
         WeatherClient wc = new WeatherClient();
+        wc.init();
         wc.pingCollect();
         wc.populate("WIND", 0, 10, 6, 4, 20);
 
