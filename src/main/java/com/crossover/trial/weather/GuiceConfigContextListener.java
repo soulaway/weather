@@ -2,11 +2,9 @@ package com.crossover.trial.weather;
 
 import com.crossover.trial.weather.rest.RestWeatherCollectorEndpoint;
 import com.crossover.trial.weather.rest.RestWeatherQueryEndpoint;
-import com.crossover.trial.weather.service.WeatherService;
 import com.crossover.trial.weather.service.WeatherServiceImpl;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 

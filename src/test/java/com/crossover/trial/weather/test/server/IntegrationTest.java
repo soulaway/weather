@@ -1,6 +1,5 @@
 package com.crossover.trial.weather.test.server;
 
-import java.awt.List;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
