@@ -41,11 +41,6 @@ public class WeatherPoint implements Serializable {
 		return typeCode;
 	}
 
-	public WeatherPoint withTypeCode(String typeCode) {
-		this.typeCode = typeCode;
-		return this;
-	}
-
 	public double getMean() {
 		return mean;
 	}

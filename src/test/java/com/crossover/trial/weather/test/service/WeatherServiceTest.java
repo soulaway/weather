@@ -73,33 +73,33 @@ public class WeatherServiceTest {
 	@Test
 	public void getWeather() {
 		List<WeatherPoint> weather = service.getWeather(D_IATA, 0.0);
-		for (WeatherPoint wp : weather) {
-			// assuming @loadTestData updates only WIND WP with parameters
-			if (wp.getTypeCode() != D_TYPE_WIND) {
-				// rest WeatherPoints parameters expected to be 0
-				assertEquals(wp.getFirst(), 0);
-				assertEquals(wp.getSecond(), 0);
-				assertEquals(wp.getThird(), 0);
-				assertEquals(wp.getMean(), 0.0, 0);
-				assertEquals(wp.getLastUpdateTime(), 0);
-			} else {
-				assertEquals(wp.getFirst(), D_FIRST);
-				assertEquals(wp.getSecond(), D_SECOND);
-				assertEquals(wp.getThird(), D_THIRD);
-				assertEquals(wp.getMean(), D_MEAN, 0.1);
-				assertNotEquals(wp.getLastUpdateTime(), 0);
-			}
-		}
-		assertEquals(weather.size(), WeatherPointType.values().length);
+		assertEquals(weather.size(), 1);
+		assertWeatherPointValues(weather.get(0), weatherPoint);
+		assertNotEquals(weather.get(0).getLastUpdateTime(), 0);
 	}
 
 	@Test
 	public void getWeatherWithRadius() {
 		service.addAirport("EWR", 40.6925, -74.168667);
+		WeatherPoint windPoint = new WeatherPoint(WeatherPointType.WIND.getCode()).withCount(D_COUNT).withFirst(D_FIRST).withMean(D_MEAN).withSecond(D_SECOND).withThird(D_THIRD);
+		WeatherPoint tempPoint = new WeatherPoint(WeatherPointType.TEMPERATURE.getCode()).withCount(D_COUNT).withFirst(D_FIRST).withMean(D_MEAN).withSecond(D_SECOND).withThird(D_THIRD);
+		WeatherPoint cloudPoint = new WeatherPoint(WeatherPointType.CLOUDCOVER.getCode()).withCount(D_COUNT).withFirst(D_FIRST).withMean(D_MEAN).withSecond(D_SECOND).withThird(D_THIRD);
+
+		service.addAirport("EWR", 40.6925, -74.168667);
+		service.updateWeatherPoint("EWR", WeatherPointType.WIND.getCode(), windPoint);
+		
 		service.addAirport("JFK", 40.639751, -73.778925);
+		service.updateWeatherPoint("JFK", WeatherPointType.TEMPERATURE.getCode(), tempPoint);
+		
 		service.addAirport("LGA", 40.777245, -73.872608);
+		service.updateWeatherPoint("LGA", WeatherPointType.CLOUDCOVER.getCode(), cloudPoint);
+
 		List<WeatherPoint> weather = service.getWeather("JFK", 200.0);
-		assertEquals(weather.size(), WeatherPointType.values().length * 3);
+		System.out.println(weather);
+		assertTrue(weather.contains(windPoint));
+		assertTrue(weather.contains(tempPoint));
+		assertTrue(weather.contains(cloudPoint));
+		assertEquals(weather.size(), 3);
 	}
 
 	@Test
@@ -115,7 +115,15 @@ public class WeatherServiceTest {
 		WeatherPoint target = WeatherPointType.getFirstByCode(code, airportWeather);
 		assertEquals(target, w);
 	}
-
+	
+	private void assertWeatherPointValues(WeatherPoint actual, WeatherPoint expected){
+		assertTrue(actual.getTypeCode() == expected.getTypeCode() );
+		assertEquals(actual.getFirst(), expected.getFirst());
+		assertEquals(actual.getSecond(), expected.getSecond());
+		assertEquals(actual.getThird(), expected.getThird());
+		assertEquals(actual.getMean(), expected.getMean(), 0.1);		
+	}
+	
 	@Test(expected = InvalidEnumValueException.class)
 	public void updateWeatherWrongTypeCode() {
 		String code = "WRONG";

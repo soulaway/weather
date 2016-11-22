@@ -33,17 +33,7 @@ public class WeatherClient {
         query = client.target(BASE_URI + "/query");
         collect = client.target(BASE_URI + "/collect");
     }
-    
-    public void init(){
-    	AirportLoader loader = new AirportLoader(WeatherServer.BASE_URI);
-		URL url = WeatherClient.class.getClassLoader().getResource("airports.dat");
-		try {
-			loader.upload(url.getPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-    
+
     public void pingCollect() {
         WebTarget path = collect.path("/ping");
         Response response = path.request().get();
@@ -64,10 +54,20 @@ public class WeatherClient {
 
     public void populate(String pointType, int first, int last, int mean, int median, int count) {
         WebTarget path = collect.path("/weather/BOS/" + pointType);
-        WeatherPoint dp = new WeatherPoint(pointType).withCount(count).withFirst(first).withSecond(median).withThird(last).withMean(mean);
-        path.request().post(Entity.entity(dp, "application/json"));
+        WeatherPoint wp = new WeatherPoint(pointType).withFirst(first).withThird(last).withMean(mean).withSecond(median).withCount(count);
+        Response post = path.request().post(Entity.entity(wp, "application/json"));
     }
-
+    
+    public void initLoaderUpload(){
+    	AirportLoader loader = new AirportLoader(WeatherServer.BASE_URI);
+		URL url = WeatherClient.class.getClassLoader().getResource("airports.dat");
+		try {
+			loader.upload(url.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
     public void exit() {
         try {
             collect.path("/exit").request().get();
@@ -77,9 +77,8 @@ public class WeatherClient {
     }
 
     public static void main(String[] args) {
-  		
         WeatherClient wc = new WeatherClient();
-        wc.init();
+        wc.initLoaderUpload();
         wc.pingCollect();
         wc.populate("WIND", 0, 10, 6, 4, 20);
 
@@ -91,7 +90,7 @@ public class WeatherClient {
 
         wc.pingQuery();
         wc.exit();
-		System.out.print("complete");
+        System.out.print("complete");
         System.exit(0);
     }
 }

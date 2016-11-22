@@ -24,6 +24,7 @@ import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
 import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.WeatherServiceImpl;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.servlet.RequestScoped;
 
 /**
@@ -55,7 +56,7 @@ public class RestWeatherCollectorEndpoint implements WeatherCollectorEndpoint {
 	public Response updateWeather(@PathParam("iata") String iataCode, @PathParam("pointType") String pointType,
 			String datapointJson) {
 		try {
-			Gson gson = new Gson();
+			Gson gson = new GsonBuilder().create();
 			queryService.updateWeatherPoint(iataCode, pointType, gson.fromJson(datapointJson, WeatherPoint.class));
 		} catch (BusinessException e) {
 			e.printStackTrace();

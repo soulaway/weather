@@ -80,7 +80,7 @@ public class WeatherServiceImpl implements WeatherService, Serializable {
 		if (radius == 0) {
 			List<WeatherPoint> weather = airports.get(iata).getWeather();
 			List<WeatherPoint> result = new ArrayList<>(weather.size());
-			result.addAll(weather);
+			weather.stream().filter((w) -> w.getLastUpdateTime()  > 0).forEach(w -> result.add(w));
 			return result;
 		} else {
 			return findWeatherByRadius(iata, radius);
@@ -93,7 +93,7 @@ public class WeatherServiceImpl implements WeatherService, Serializable {
 		List<Airport> airports = getAirports();
 		airports.stream().forEach(a -> {
 			if (calculateDistance(ad, a) <= radius) {
-				result.addAll(a.getWeather());
+				a.getWeather().stream().filter((w) -> w.getLastUpdateTime()  > 0).forEach(w -> result.add(w));
 			}
 		});
 		return result;
@@ -109,15 +109,18 @@ public class WeatherServiceImpl implements WeatherService, Serializable {
 	}
 
 	private void updateRequestFrequency(String iata, Double radius) {
-
 		AtomicInteger prevReqF = requestFrequency.putIfAbsent(iata, new AtomicInteger(1));
 		AtomicInteger prevRadF = radiusFreq.putIfAbsent(radius, new AtomicInteger(1));
+		
 		if (prevReqF != null) {
 			prevReqF.incrementAndGet();
 		}
 		if (prevRadF != null) {
 			prevRadF.incrementAndGet();
 		}
+		
+		System.out.println("requestFrequency: " + requestFrequency);
+		System.out.println("radiusFreq: " + radiusFreq);
 	}
 
 	@Override
@@ -142,7 +145,7 @@ public class WeatherServiceImpl implements WeatherService, Serializable {
 			for (String iata : airports.keySet()) {
 				if (requestFrequency.containsKey(iata)) {
 					int counter = requestFrequency.get(iata).get();
-					double frac = (double) (counter / requestFrequency.size());
+					double frac = (double) (counter) / requestFrequency.size();
 					freq.put(iata, frac);
 				}
 			}

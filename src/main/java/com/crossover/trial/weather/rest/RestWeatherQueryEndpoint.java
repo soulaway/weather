@@ -19,6 +19,7 @@ import com.crossover.trial.weather.exception.MissingMandatoryAttrException;
 import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.crossover.trial.weather.service.WeatherServiceImpl;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.inject.servlet.RequestScoped;
 
 /**
@@ -44,14 +45,11 @@ public class RestWeatherQueryEndpoint implements WeatherQueryEndpoint {
 	 * @return health stats for the service as a string
 	 */
 
-	@GET
-	@Path("/ping")
-	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public String ping() {
-		Gson gson = new Gson();
+		Gson gson = new GsonBuilder().create();
 		String result = gson.toJson(queryService.getHelthStatus());
-		return Response.status(Response.Status.OK).entity(result).build().toString();
+		return result;
 	}
 
 	/**

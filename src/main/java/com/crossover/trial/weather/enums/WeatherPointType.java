@@ -77,7 +77,7 @@ public enum WeatherPointType {
 		if (result.isPresent()) {
 			return result.get();
 		} else {
-			throw new InvalidEnumValueException("WeatherPointType", code);
+			throw new InvalidEnumValueException(WeatherPointType.class.getSimpleName(), code);
 		}
 	}
 
