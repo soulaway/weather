@@ -32,13 +32,17 @@ public class AirportLoader {
 
 	/** end point to supply updates */
 	private WebTarget collect;
-
+	
+	public AirportLoader(){
+		
+	}
+	
 	public AirportLoader(URI uri) {
 		Client client = ClientBuilder.newClient();
 		collect = client.target(uri + "collect");
 	}
 
-	public static Function<String, Airport> mapToAirport = (line) -> {
+	public Function<String, Airport> mapToAirport = (line) -> {
 		String[] p = line.split(",");
 		return new Airport().withIata(p[IATA_CSV_HEADER_IDX].substring(1, p[IATA_CSV_HEADER_IDX].length() - 1))
 				.withLatitude(Double.parseDouble(p[LAT_CSV_HEADER_IDX]))
@@ -52,7 +56,7 @@ public class AirportLoader {
 		response.close();
 		return result;
 	}
-
+	
 	@SuppressWarnings("resource")
 	public void upload(String filePath) throws IOException {
 		Stream<String> stream = Files.lines(Paths.get(filePath));

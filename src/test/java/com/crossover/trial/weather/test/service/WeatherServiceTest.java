@@ -36,7 +36,7 @@ public class WeatherServiceTest {
 	private Airport airport = new Airport().withIata(D_IATA).withLatitude(D_LAT).withLongitude(D_LON);
 	private WeatherPoint weatherPoint = new WeatherPoint(D_TYPE_WIND).withFirst(D_FIRST).withSecond(D_SECOND)
 			.withMean(D_MEAN).withThird(D_THIRD).withCount(D_COUNT);
-
+	
 	@Before
 	public void loadTestData() {
 		service.addAirport(D_IATA, D_LAT, D_LON);
@@ -95,7 +95,6 @@ public class WeatherServiceTest {
 		service.updateWeatherPoint("LGA", WeatherPointType.CLOUDCOVER.getCode(), cloudPoint);
 
 		List<WeatherPoint> weather = service.getWeather("JFK", 200.0);
-		System.out.println(weather);
 		assertTrue(weather.contains(windPoint));
 		assertTrue(weather.contains(tempPoint));
 		assertTrue(weather.contains(cloudPoint));

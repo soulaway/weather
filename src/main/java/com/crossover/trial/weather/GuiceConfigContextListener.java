@@ -28,9 +28,9 @@ public class GuiceConfigContextListener extends GuiceServletContextListener {
 		injector = Guice.createInjector(new ServletModule() {
 			@Override
 			protected void configureServlets() {
-				bind(WeatherServiceImpl.class);
-				bind(RestWeatherCollectorEndpoint.class);
-				bind(RestWeatherQueryEndpoint.class);
+				bind(WeatherServiceImpl.class); //singleton
+				bind(RestWeatherCollectorEndpoint.class); //request
+				bind(RestWeatherQueryEndpoint.class); //request
 			}
 		});
 

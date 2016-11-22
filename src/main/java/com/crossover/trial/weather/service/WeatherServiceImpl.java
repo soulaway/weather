@@ -21,10 +21,10 @@ import com.crossover.trial.weather.exception.UnknownIataCodeException;
 import com.google.inject.Singleton;
 
 /**
- * Singleton, represents a state-full resource object.
+ * WeatherServiceImpl, represents a state-full service object.
  * 
- * Implements the application business logic @WeatherService Holds data
- * resources: @airports; @requestFrequency; @radiusFreq
+ * Implements the application business logic @WeatherService 
+ * Holds data resources: @airports; @requestFrequency; @radiusFreq
  * 
  * @author soul
  *
@@ -34,7 +34,7 @@ import com.google.inject.Singleton;
 public class WeatherServiceImpl implements WeatherService, Serializable {
 
 	private static final long serialVersionUID = WeatherServiceImpl.class.getName().hashCode();
-
+	
 	public final static Logger LOGGER = Logger.getLogger(WeatherServiceImpl.class.getName());
 
 	/** earth radius in KM */

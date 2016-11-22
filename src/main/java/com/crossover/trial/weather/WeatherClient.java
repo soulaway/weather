@@ -58,16 +58,6 @@ public class WeatherClient {
         Response post = path.request().post(Entity.entity(wp, "application/json"));
     }
     
-    public void initLoaderUpload(){
-    	AirportLoader loader = new AirportLoader(WeatherServer.BASE_URI);
-		URL url = WeatherClient.class.getClassLoader().getResource("airports.dat");
-		try {
-			loader.upload(url.getPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
-    
     public void exit() {
         try {
             collect.path("/exit").request().get();
@@ -78,7 +68,6 @@ public class WeatherClient {
 
     public static void main(String[] args) {
         WeatherClient wc = new WeatherClient();
-        wc.initLoaderUpload();
         wc.pingCollect();
         wc.populate("WIND", 0, 10, 6, 4, 20);
 

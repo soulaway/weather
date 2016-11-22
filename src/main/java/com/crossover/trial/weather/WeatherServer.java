@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,8 @@ import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
 
+import com.crossover.trial.weather.exception.ResourceUnavaliableException;
+import com.crossover.trial.weather.properties.WeatherProperties;
 import com.google.inject.servlet.GuiceFilter;
 
 /**
@@ -34,16 +37,17 @@ import com.google.inject.servlet.GuiceFilter;
  * @author code test administrator
  */
 public class WeatherServer {
-
-	public static final URI BASE_URI = UriBuilder.fromUri("http://127.0.0.1/").port(9090).build();
+	
+	private static String url =  WeatherProperties.instance.getProperty("com.crossover.trial.weather.base-url");
+	private static int port =  Integer.parseInt(WeatherProperties.instance.getProperty("com.crossover.trial.weather.port"));
+	
+	public static final URI BASE_URI = UriBuilder.fromUri(url).port(port).build();
 
 	public static void main(String[] args) {
 		try {
 			System.out.println("Starting Weather App local testing server: " + BASE_URI.toString());
 
-			HttpServer server = createGreezly(BASE_URI);
-			createGuiceWebappContext(WeatherApplication.class).deploy(server);
-			server.start();
+			HttpServer server = startGreezly(BASE_URI);
 
 			// the autograder waits for this output before running automated
 			// tests, please don't remove it
@@ -52,7 +56,7 @@ public class WeatherServer {
 			// blocks until the process is terminated
 			Thread.currentThread().join();
 			server.shutdown();
-		} catch (ServletException | IOException | InterruptedException ex) {
+		} catch (InterruptedException ex) {
 			Logger.getLogger(WeatherServer.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
@@ -83,8 +87,18 @@ public class WeatherServer {
 
 		return context;
 	}
-
-	public static HttpServer createGreezly(URI baseUri) {
+	
+	public static void loadInitialData(){
+    	AirportLoader loader = new AirportLoader(BASE_URI);
+		URL url = WeatherServer.class.getClassLoader().getResource("airports.dat");
+		try {
+			loader.upload(url.getPath());
+		} catch (IOException e) {
+			throw new ResourceUnavaliableException(url.getPath());
+		}			
+	}
+	
+	public static HttpServer startGreezly(URI baseUri) {
 		final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, false);
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -99,7 +113,18 @@ public class WeatherServer {
 		};
 
 		server.getServerConfiguration().getMonitoringConfig().getWebServerConfig().addProbes(probe);
+		
+		try {
+			createGuiceWebappContext(WeatherApplication.class).deploy(server);
+			server.start();
+		} catch (IOException | ServletException e) {
+			Logger.getLogger(WeatherServer.class.getName()).log(Level.SEVERE, null, e);
+		}
 
+		boolean isLoadData = WeatherProperties.instance.getBoolean("com.crossover.trial.weather.load-initial-data");
+		if (isLoadData){
+			loadInitialData();
+		}
 		return server;
 	}
 }

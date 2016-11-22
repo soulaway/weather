@@ -18,26 +18,27 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.crossover.trial.weather.AirportLoader;
-import com.crossover.trial.weather.WeatherApplication;
 import com.crossover.trial.weather.WeatherServer;
 import com.crossover.trial.weather.dto.Airport;
 import com.crossover.trial.weather.dto.WeatherPoint;
+import com.crossover.trial.weather.properties.WeatherProperties;
 
 public class IntegrationTest {
-
-	private static URI uri = UriBuilder.fromUri("http://localhost/").port(8282).build();
+	private static String url =  WeatherProperties.instance.getProperty("com.crossover.trial.weather.base-url");
+	
+	private static int port =  Integer.parseInt(WeatherProperties.instance.getProperty("com.crossover.trial.weather.port"));
+	
+	private static URI TEST_URL = UriBuilder.fromUri(url).port(port).build();
 
 	private static HttpServer server;
 
-	private AirportLoader loader = new AirportLoader(uri);
+	private AirportLoader loader = new AirportLoader(TEST_URL);
 
 	private static Client client = ClientBuilder.newClient();
 
 	@BeforeClass
 	public static void init() throws IOException, InterruptedException, ServletException {
-		server = WeatherServer.createGreezly(uri);
-		WeatherServer.createGuiceWebappContext(WeatherApplication.class).deploy(server);
-		server.start();
+		server = WeatherServer.startGreezly(TEST_URL);
 	}
 
 	@AfterClass
