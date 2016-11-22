@@ -118,9 +118,6 @@ public class WeatherServiceImpl implements WeatherService, Serializable {
 		if (prevRadF != null) {
 			prevRadF.incrementAndGet();
 		}
-		
-		System.out.println("requestFrequency: " + requestFrequency);
-		System.out.println("radiusFreq: " + radiusFreq);
 	}
 
 	@Override
