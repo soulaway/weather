@@ -71,7 +71,12 @@ public enum WeatherPointType {
 		}
 		throw new InvalidEnumValueException(WeatherPointType.class.getSimpleName(), code);
 	}
-
+	/**
+	 * Returns one @WeatherPoint filtered by code from the given List
+	 * @param code String
+	 * @param points List<WeatherPoint>
+	 * @return WeatherPoint
+	 */
 	public static WeatherPoint getFirstByCode(String code, List<WeatherPoint> points) {
 		Optional<WeatherPoint> result = points.stream().filter(p -> p.getTypeCode().equals(code)).findFirst();
 		if (result.isPresent()) {
@@ -81,7 +86,7 @@ public enum WeatherPointType {
 		}
 	}
 
-	public static List<WeatherPoint> getAllByCode(String code, List<WeatherPoint> points) {
+/*	public static List<WeatherPoint> getAllByCode(String code, List<WeatherPoint> points) {
 		List<WeatherPoint> result = new ArrayList<WeatherPoint>();
 		points.stream().forEach(p -> {
 			if (p.getTypeCode().equals(code)) {
@@ -89,7 +94,7 @@ public enum WeatherPointType {
 			}
 		});
 		return result;
-	}
+	}*/
 
 	/**
 	 * Indicates if particular value of the WeatherPoint needs to be updated

@@ -59,9 +59,9 @@ public class AirportLoader {
 	
 	@SuppressWarnings("resource")
 	public void upload(String filePath) throws IOException {
-		Stream<String> stream = Files.lines(Paths.get(filePath));
-		List<Airport> airports = stream.map(mapToAirport).collect(Collectors.toList());
 		if (isServerResponds()) {
+			Stream<String> stream = Files.lines(Paths.get(filePath));
+			List<Airport> airports = stream.map(mapToAirport).collect(Collectors.toList());
 			for (Airport airport : airports) {
 				WebTarget wt = collect.path(
 						"/airport/" + airport.getIata() + "/" + airport.getLatitude() + "/" + airport.getLongitude());

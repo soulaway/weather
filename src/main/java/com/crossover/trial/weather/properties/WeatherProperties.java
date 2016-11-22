@@ -54,7 +54,7 @@ public enum WeatherProperties{
 	public abstract boolean getBoolean(String key);
 
 	/**
-	 * 
+	 * Provides ability to reload application properties at runtime from the given URI
 	 * @param url
 	 */
 	
