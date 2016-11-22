@@ -12,8 +12,10 @@ import com.crossover.trial.weather.enums.WeatherPointType;
 
 /**
  * Basic airport information.
- *
- * @author code test administrator
+ * Each airport holds only relevant weather information
+ * one @WeatherPoint per @WeatherPointType
+ * 
+ * @author code test soul
  */
 public class Airport implements Serializable {
 
